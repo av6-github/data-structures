@@ -4,23 +4,34 @@
 .DATA
     SRC1 DB 11H, 22H, 33H, 44H
     SRC2 DB 10H, 20H, 30H, 40H
+    TEMP DB 5 DUP(?)
 
 .CODE
-MAIN PROC
+MAIN PROC 
     MOV AX, @DATA
     MOV DS, AX
+    MOV ES, AX
 
+    ; SRC1 → TEMP
     LEA SI, SRC1
-    LEA DI, SRC2
-    MOV CX, 4
+    LEA DI, TEMP
+    MOV CX, 5
+    CLD
+    REP MOVSB
 
-SWAP_LOOP:
-    MOV AL, [SI]     
-    XCHG AL, [DI]
-    MOV [SI], AL   
-    INC SI
-    INC DI
-    LOOP SWAP_LOOP
+    ; SRC2 → SRC1
+    LEA SI, SRC2
+    LEA DI, SRC1
+    MOV CX, 5
+    CLD
+    REP MOVSB
+
+    ; TEMP → SRC2
+    LEA SI, TEMP
+    LEA DI, SRC2
+    MOV CX, 5
+    CLD
+    REP MOVSB
 
     MOV AH, 4CH
     INT 21H

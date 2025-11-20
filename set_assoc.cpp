@@ -1,25 +1,49 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
+#define NUM_SETS 3
+#define WAYS 2          // 2-way set associative
+
 int main() {
-    int n, lines, ways;
-    cin >> n;
-    vector<int> refs(n);
-    for (int &x: refs) cin >> x;
-    cin >> lines >> ways;
+    vector<int> mainMemory = {1,2,3,4,5,6,7,8,9};
 
-    int sets = lines / ways;
-    vector<vector<int>> cache(sets, vector<int>(ways, -1));
-    vector<int> ptr(sets, 0);
+    // cache[set] = vector of pages in that set
+    vector<vector<int>> cache(NUM_SETS);
 
-    for (int b : refs) {
-        int s = b % sets;
-        bool hit = find(cache[s].begin(), cache[s].end(), b) != cache[s].end();
-        if (!hit) {
-            cache[s][ptr[s]] = b;
-            ptr[s] = (ptr[s] + 1) % ways;
+    int input;
+
+    while (true) {
+        cout << "\nEnter number to find: ";
+        cin >> input;
+
+        int setIndex = input % NUM_SETS;
+        auto &set = cache[setIndex];
+
+        auto it = find(set.begin(), set.end(), input);
+
+        if (it != set.end()) {
+            cout << "Cache HIT for " << input 
+                 << " in set " << setIndex << "\n";
+            set.erase(it);
+            set.insert(set.begin(), input); // LRU: move to front
         }
-        cout << b << " -> " << (hit ? "HIT " : "MISS ") 
-             << "set " << s << "\n";
+        else {
+            cout << "Cache MISS for " << input 
+                 << " in set " << setIndex << "\n";
+
+            if (set.size() == WAYS)
+                set.pop_back();             // evict LRU from that set
+
+            set.insert(set.begin(), input);
+        }
+
+        cout << "Cache Content:\n";
+        for (int s = 0; s < NUM_SETS; s++) {
+            cout << "Set " << s << ": ";
+            for (int x : cache[s]) cout << x << " ";
+            cout << "\n";
+        }
     }
 }
