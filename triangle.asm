@@ -1,0 +1,142 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+MSG DB 'PRESS ANY KEY TO EXIT....'
+
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    ; SET VIDEO MODE
+    MOV AH, 0
+    MOV AL, 13H
+    INT 10H
+
+    ; POINT ES TO VIDEO MEMORY SEGMENT A000H
+    MOV AX, 0A000H
+    MOV ES, AX
+
+    ; DRAW PIXEL
+
+    MOV CX, 100; X
+    MOV DX, 80; Y
+    MOV BL, 12; COLOR=RED
+    UP1:
+    CALL PUTPIXEL
+    INC CX
+    CMP CX, 200
+    JNE UP1
+
+    MOV CX, 100; X
+    MOV DX, 80; Y
+    MOV BL, 12; COLOR=RED
+    UP2:
+    CALL PUTPIXEL
+    INC CX
+    DEC DX
+    CMP CX, 150
+    JNE UP2
+
+    MOV CX, 200; X
+    MOV DX, 80; Y
+    MOV BL, 12; COLOR=RED
+    UP3:
+    CALL PUTPIXEL
+    DEC CX
+    DEC DX
+    CMP CX, 150
+    JNE UP3
+
+    MOV CX, 100; X
+    MOV DX, 80; Y
+    MOV BL, 12; COLOR=RED
+    UP4:
+    CALL PUTPIXEL
+    INC DX
+    CMP DX, 150
+    JNE UP4
+
+    MOV CX, 200; X
+    MOV DX, 80; Y
+    MOV BL, 12; COLOR=RED
+    UP5:
+    CALL PUTPIXEL
+    INC DX
+    CMP DX, 150
+    JNE UP5
+    
+    MOV CX, 100; X
+    MOV DX, 150; Y
+    MOV BL, 12; COLOR=RED
+    UP6:
+    CALL PUTPIXEL
+    INC CX
+    CMP CX, 200
+    JNE UP6
+
+    MOV CX, 175; X
+    MOV DX, 150; Y
+    MOV BL, 12; COLOR=RED
+    UP7:
+    CALL PUTPIXEL
+    DEC DX
+    CMP DX, 100
+    JNE UP7
+
+    MOV CX, 125; X
+    MOV DX, 150; Y
+    MOV BL, 12; COLOR=RED
+    UP8:
+    CALL PUTPIXEL
+    DEC DX
+    CMP DX, 100
+    JNE UP8
+
+    MOV CX, 125; X
+    MOV DX, 100; Y
+    MOV BL, 12; COLOR=RED
+    UP9:
+    CALL PUTPIXEL
+    INC CX
+    CMP CX, 175
+    JNE UP9
+
+    ; WAIT FOR KEY
+    MOV AH,0
+    INT 16H
+
+    ; RESTORE TEXT MODE
+    MOV AH, 0
+    MOV AL, 03H
+    INT 10H
+
+    ; EXIT
+    MOV AX, 4C00H
+    INT 21H
+MAIN ENDP
+
+PUTPIXEL PROC
+    PUSH AX
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    PUSH DI
+
+    MOV AX, DX
+    MOV BX, 320; PIXELS PER ROW
+    MUL BX; AX=Y*320
+    ADD AX, CX; AX=Y*320+X
+    MOV DI, AX; OFFSET INTO VIDEO MEMORY
+    MOV ES:[DI], BL; WRITE COLOR TO VIDEO MEMORY
+
+    POP DI
+    POP DX
+    POP CX
+    POP BX
+    POP AX
+    RET
+PUTPIXEL ENDP
+
+END MAIN

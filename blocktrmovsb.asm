@@ -1,0 +1,25 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+    SRC DB 10H, 20H, 30H, 40H, 50H
+    DEST DB 5 DUP(?)
+
+.CODE
+MAIN PROC 
+    MOV AX, @DATA
+    MOV DS, AX
+
+    MOV ES, AX
+
+    LEA SI, SRC
+    LEA DI, DEST
+    MOV CX,5
+    CLD
+    REP MOVSB
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+END MAIN
+

@@ -1,0 +1,28 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+    SRC1 DB 11H, 22H, 33H, 44H
+    SRC2 DB 10H, 20H, 30H, 40H
+
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    LEA SI, SRC1
+    LEA DI, SRC2
+    MOV CX, 4
+
+SWAP_LOOP:
+    MOV AL, [SI]     
+    XCHG AL, [DI]
+    MOV [SI], AL   
+    INC SI
+    INC DI
+    LOOP SWAP_LOOP
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+END MAIN
